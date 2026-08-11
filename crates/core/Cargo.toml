@@ -1,0 +1,9 @@
+[package]
+name = "crustalline-core"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+molrs = { workspace = true }
+crustalline-ipc-types = { path = "../ipc-types" }
+thiserror = { workspace = true }

@@ -1,0 +1,20 @@
+[package]
+name = "crustalline-app"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "crustalline"
+path = "src/main.rs"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+crustalline-core = { path = "../core" }
+crustalline-ipc-types = { path = "../ipc-types" }
+tauri = { version = "2", features = [] }
+clap = { version = "4", features = ["derive"] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+base64 = "0.23"
