@@ -11,8 +11,9 @@ See [`../.claude/plans/`](/home/tanaka/.claude/plans) session history for the
 original architecture plan, and [`docs/`](docs/) for living reference docs:
 
 - [`docs/molrs-api-contract.md`](docs/molrs-api-contract.md) — the mutable
-  graph-editing API crustalline needs molrs to expose (spec only; not yet
-  implemented in molrs).
+  graph-editing API design (now implemented as `molrs::edit`, `editing`
+  feature, and wired into `crates/core`; see the doc for known deviations
+  from the original spec).
 - [`docs/headless-rendering.md`](docs/headless-rendering.md) — WebKitGTK /
   WebGL / Xvfb setup notes for Linux.
 

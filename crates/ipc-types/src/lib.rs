@@ -29,6 +29,44 @@ pub struct ExportSvgRequest {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AddAtomRequest {
+    pub symbol: String,
+    pub formal_charge: i8,
+    /// (existing atom idx, bond order) — omit to add an unbonded atom.
+    pub bonded_to: Option<(usize, f64)>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RemoveAtomRequest {
+    pub atom_idx: usize,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct BondRequest {
+    pub a: usize,
+    pub b: usize,
+    pub order: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RemoveBondRequest {
+    pub a: usize,
+    pub b: usize,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SetFormalChargeRequest {
+    pub atom_idx: usize,
+    pub charge: i8,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AddAtomDto {
+    pub mol_block: String,
+    pub new_atom_idx: usize,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct IpcError {
     pub message: String,
 }

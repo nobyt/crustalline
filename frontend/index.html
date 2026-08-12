@@ -16,6 +16,13 @@
       #toolbar button, #toolbar select { padding: 4px 12px; }
       #toolbar input[type="color"] { width: 28px; height: 28px; padding: 0; border: none; background: none; }
       #status { color: #f66; font-size: 12px; }
+      #edit-toolbar {
+        position: absolute; top: 44px; left: 0; right: 0; z-index: 10;
+        display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(0,0,0,0.3);
+        font-family: system-ui, sans-serif; color: #ddd; font-size: 13px;
+      }
+      #edit-toolbar button { padding: 4px 10px; }
+      #edit-toolbar select { padding: 4px 6px; }
       #panel-2d {
         position: absolute; top: 48px; right: 8px; bottom: 8px; width: 320px;
         background: rgba(255,255,255,0.95); border-radius: 4px; z-index: 9;
@@ -39,6 +46,20 @@
         <button id="toggle-2d-btn">2D</button>
         <button id="export-svg-btn">Export SVG</button>
         <span id="status"></span>
+      </div>
+      <div id="edit-toolbar">
+        <span id="selection-label">No atom selected — click an atom in the 3D view</span>
+        <select id="add-atom-select">
+          <option value="C" selected>C</option>
+          <option value="N">N</option>
+          <option value="O">O</option>
+          <option value="F">F</option>
+          <option value="Cl">Cl</option>
+        </select>
+        <button id="add-atom-btn" disabled>Add atom (bonded)</button>
+        <button id="remove-atom-btn" disabled>Remove selected</button>
+        <button id="undo-btn">Undo</button>
+        <button id="redo-btn">Redo</button>
       </div>
       <div id="panel-2d"></div>
     </div>

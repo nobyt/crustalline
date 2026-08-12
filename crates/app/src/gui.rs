@@ -13,6 +13,14 @@ pub fn base_builder() -> tauri::Builder<tauri::Wry> {
             commands::molecule::get_mol_block,
             commands::molecule::get_svg,
             commands::molecule::export_svg,
+            commands::edit::add_atom,
+            commands::edit::remove_atom,
+            commands::edit::add_bond,
+            commands::edit::remove_bond,
+            commands::edit::set_bond_order,
+            commands::edit::set_formal_charge,
+            commands::edit::undo,
+            commands::edit::redo,
         ])
 }
 

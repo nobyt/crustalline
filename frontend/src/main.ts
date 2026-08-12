@@ -1,44 +1,16 @@
 import { initViewer, renderMolBlock, setBackgroundColor, setStyleKind, StyleKind } from "./viewer";
 import { exportSvg, getSvg, ipcErrorMessage, loadSmiles } from "./ipc";
 import { isHeadless, runHeadless } from "./headless-bridge";
+import { clearSelection, initEditing } from "./editing";
 
-const BENZENE_MOL_BLOCK = `benzene
-  crustalline-M1
-
- 12 12  0  0  0  0  0  0  0  0999 V2000
-    1.2124    0.7000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-    1.2124   -0.7000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-    0.0000   -1.4000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-   -1.2124   -0.7000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-   -1.2124    0.7000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-    0.0000    1.4000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-    2.1489    1.2444    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0
-    2.1489   -1.2444    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0
-    0.0000   -2.4889    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0
-   -2.1489   -1.2444    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0
-   -2.1489    1.2444    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0
-    0.0000    2.4889    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0
-  1  2  2  0
-  2  3  1  0
-  3  4  2  0
-  4  5  1  0
-  5  6  2  0
-  6  1  1  0
-  1  7  1  0
-  2  8  1  0
-  3  9  1  0
-  4 10  1  0
-  5 11  1  0
-  6 12  1  0
-M  END
-`;
+const DEFAULT_SMILES = "c1ccccc1"; // benzene
 
 function setStatus(message: string) {
   const el = document.getElementById("status");
   if (el) el.textContent = message;
 }
 
-function main() {
+async function main() {
   if (isHeadless()) {
     // Headless render window (plan §5): no toolbar/mouse handlers needed —
     // just load the requested SMILES, render, and hand a PNG back to Rust.
@@ -58,7 +30,12 @@ function main() {
     setStatus(gl ? "webgl: ok" : "webgl: UNAVAILABLE");
 
     initViewer("viewport");
-    renderMolBlock(BENZENE_MOL_BLOCK);
+    // Load through molrs (not a hardcoded MOL block) so Rust-side AppState
+    // actually holds a molecule from startup — editing needs that state to
+    // exist, not just something rendered client-side.
+    const { mol_block } = await loadSmiles(DEFAULT_SMILES);
+    renderMolBlock(mol_block);
+    initEditing(setStatus);
   } catch (err) {
     setStatus(`init error: ${err instanceof Error ? err.message : String(err)}`);
     console.error(err);
@@ -75,6 +52,7 @@ function main() {
     try {
       const { mol_block } = await loadSmiles(smiles);
       renderMolBlock(mol_block);
+      clearSelection(); // stale selection from the previous molecule no longer applies
       setStatus(`loaded ${smiles}`);
     } catch (err) {
       setStatus(`load error: ${ipcErrorMessage(err)}`);

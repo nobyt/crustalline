@@ -4,6 +4,6 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
-molrs = { workspace = true }
+molrs = { workspace = true, features = ["editing"] }
 crustalline-ipc-types = { path = "../ipc-types" }
 thiserror = { workspace = true }

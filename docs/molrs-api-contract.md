@@ -1,10 +1,17 @@
 # molrs mutable-editing API — contract spec
 
-**Status: not implemented.** This document specifies the API that `crustalline`
-(specifically `crates/core::edit`) needs `molrs` to expose so interactive molecule
-editing can be built. It is written for a separate session working directly in
-`~/ghq/github.com/nobyt/molrs`. Nothing here is implemented in the crustalline
-repo or in molrs yet — crustalline's M5 milestone is blocked until this lands.
+**Status: implemented in molrs (`molrs::edit`, `editing` feature, commit I45
+"implement molrs::edit mutable-editing API") and wired into crustalline's
+`crates/core` (M5).** The implementation deviates from this spec in five
+documented places — see `molrs::edit`'s module doc comment
+(`molrs/src/edit.rs`) for the authoritative list; the most consequential is
+that `add_atom`/`add_bond`/`set_bond_order` return an index remap
+(`(usize, Vec<usize>)` / `Vec<usize>`) rather than the bare `usize`/`()` this
+document originally specified, because heavy atoms must stay contiguous at
+`[0, n_heavy)` for `canon.rs`/`inchi/*.rs` to keep working — inserting one
+always shifts every already-appended implicit-H atom. This document is kept
+below as the original design rationale; treat `molrs::edit`'s own doc comment
+as authoritative on exact signatures.
 
 molrs today (verified against `molrs/molrs/src/graph.rs`, `lib.rs`) is parse-in /
 derive-out only: `graph::build_molecule_graph(smiles: &str) -> Result<MoleculeGraph, ChemError>`
