@@ -44,17 +44,20 @@ export function getViewer() {
 const HIGHLIGHT_STYLE = { sphere: { scale: 0.4, color: "yellow" } };
 
 /**
- * Registers a click handler over every atom. 3Dmol's atom-picking callback
- * exposes both `.serial` (1-based, as written in the MOL block) and
- * `.index` (0-based position in the model's internal atom array) — since
- * molrs's to_mol_block writes atoms in graph atom_idx order starting at 0,
- * these should both map directly onto our atom_idx, but this hasn't been
- * confirmed against a real running viewer yet (see docs/headless-rendering.md
- * for why) — verify serial-1 and index agree before trusting either alone.
+ * Registers a click handler over every atom. Verified directly against
+ * 3Dmol's unvendored V2000 parser source (node_modules/3dmol/build/3Dmol.js,
+ * parseV2000: `atom.index = curFrame.length` / `atom.serial = i` are set
+ * from the same 0-based loop counter over the MOL block's atom lines, with
+ * hydrogens kept by default) — both `.index` and `.serial` equal the atom's
+ * 0-based position in the MOL block, which is exactly molrs's atom_idx
+ * (to_mol_block writes g.atoms in order starting at 0). No off-by-one
+ * adjustment needed on either field; `.index` is used as the primary source
+ * since it's 3Dmol's own canonical addressing (same field `setStyle({index})`
+ * selection uses elsewhere in this file).
  */
 export function enableAtomPicking(onPick: (atomIdx: number) => void) {
   viewer.setClickable({}, true, (atom: { index?: number; serial?: number }) => {
-    const idx = typeof atom.index === "number" ? atom.index : (atom.serial ?? 1) - 1;
+    const idx = typeof atom.index === "number" ? atom.index : (atom.serial ?? 0);
     onPick(idx);
   });
 }
